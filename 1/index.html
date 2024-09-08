@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Portfolio</title>
+    <style>
+        body {
+            background-color: lightgray;
+            font-family: Verdana, sans-serif;
+            margin: 40px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .column {
+            padding: 5px;
+        }
+
+        .caption {
+            text-align: center;
+        }
+
+        .imageSections {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        figcaption {
+            padding: 2px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Header">
+        <h1>Images of the Russian Empire:</h1>
+        <h2>Colorizing the Prokudin-Gorskii photo collection</h2>
+        <h2><i>Catherine Chu</i></h2>
+    </div>
+
+
+    <div class="row">
+        <div class="column">
+            <img src="media/emir_glass_plate.jpg" alt="emir_glass_plate" style="width:200px">
+        </div>
+        <div class="column">
+            <img src="media/cropped_out_3ch_ssim_emir.tif.jpg" alt="ssim_emir" style="width:400px">
+        </div>
+    </div>
+
+    <div class="caption">
+        <p> <b>Left:</b> Glass plate image of Emir of Bukhara.
+            <b>Right:</b> Aligned 3-color channel RGB image.
+        </p>
+    </div>
+
+    <div class="explanation">
+        <h2>Approach</h2>
+        <p>
+            Overview<br>
+            This project...<br><br>
+
+            Coarsest Image<br>
+            - Downsample original image such that its shortest side is rescaled to be as close to 100 as possible<br>
+            - Try displacements within +/- 8% of image width and length (naive implementation)<br><br>
+
+            Coarse-to-Fine Image Pyramid<br>
+            - Scale up coarse images (and optimal displacements) by a factor of 2<br>
+            - Try displacements within +/- 1% of optimal displacement<br>
+            - Significantly reduces alignment speed<br><br>
+
+            Image Matching Evaluation Metric<br>
+            - NCC: dot product between two normalized vectors<br>
+            - SSIM: structural similarity index (considers luminance, contrast structure)<br>
+            - Performs better for images like emir.tif, but runs 4x slower
+        </p>
+    </div>
+
+    <div class="imageSections">
+        <h3>Low-Resolution jpg Images</h3>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_cathedral.jpg.jpg" alt="ncc_cathedral" style="width:100%">
+                        <figcaption>Cathedral<br>
+                            G (x or width, y or height): (2, 5)<br>
+                            R (x or width, y or height): (3, 12)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_monastery.jpg.jpg" alt="ncc_monastery" style="width:100%">
+                        <figcaption>Monastery<br>
+                            G (x or width, y or height): (2, -3)<br>
+                            R (x or width, y or height): (2, 3)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_tobolsk.jpg.jpg" alt="ncc_tobolsk" style="width:100%">
+                        <figcaption>Tobolsk<br>
+                            G (x or width, y or height): (2, 3)<br>
+                            R (x or width, y or height): (3, 6)
+                        </figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+        <h3>High-Resolution tif Images</h3>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_church.tif.jpg" alt="ncc_church" style="width:100%">
+                        <figcaption>Church<br>
+                            G (x or width, y or height): (-8, 25)<br>
+                            R (x or width, y or height): (-5, 58)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_emir.tif.jpg" alt="ncc_emir" style="width:100%">
+                        <figcaption>Emir<br>
+                            G (x or width, y or height): (24, 49)<br>
+                            R (x or width, y or height): (42, 91)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_harvesters.tif.jpg" alt="ncc_harvesters" style="width:100%">
+                        <figcaption>Harvesters<br>
+                            G (x or width, y or height): (16, 60)<br>
+                            R (x or width, y or height): (14, 124)
+                        </figcaption>
+                    </figure>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_icon.tif.jpg" alt="ncc_icon" style="width:100%">
+                        <figcaption>Icon<br>
+                            G (x or width, y or height): (17, 40)<br>
+                            R(x or width, y or height): (23, 89)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_lady.tif.jpg" alt="ncc_lady" style="width:100%">
+                        <figcaption>Lady<br>
+                            G (x or width, y or height): (8, 55)<br>
+                            R (x or width, y or height): (12, 110)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_melons.tif.jpg" alt="ncc_melons" style="width:100%">
+                        <figcaption>Melons<br>
+                            G (x or width, y or height): (9, 82)<br>
+                            R (x or width, y or height): (11, 177)
+                        </figcaption>
+                    </figure>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_onion_church.tif.jpg" alt="ncc_onion_church"
+                            style="width:100%">
+                        <figcaption>Onion Church<br>
+                            G (x or width, y or height): (26, 51)<br>
+                            R (x or width, y or height): (36, 108)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_sculpture.tif.jpg" alt="ncc_sculpture" style="width:100%">
+                        <figcaption>Sculpture<br>
+                            G (x or width, y or height): (-11, 33)<br>
+                            R (x or width, y or height): (-26, 140)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_self_portrait.tif.jpg" alt="ncc_self_portrait"
+                            style="width:100%">
+                        <figcaption>Self Portrait<br>
+                            G (x or width, y or height): (29, 79)<br>
+                            R (x or width, y or height): (31, 175)
+                        </figcaption>
+                    </figure>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_three_generations.tif.jpg" alt="ncc_three_generations"
+                            style="width:100%">
+                        <figcaption>Three Generations<br>
+                            G (x or width, y or height): (13, 55)<br>
+                            R (x or width, y or height): (10, 112)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ncc_train.tif.jpg" alt="ncc_train" style="width:100%">
+                        <figcaption>Train<br>
+                            G (x or width, y or height): (6, 42)<br>
+                            R (x or width, y or height): (32, 87)
+                        </figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+        <h3>High-Resolution jpg Images with SSIM</h3>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ssim_church.tif.jpg" alt="ssim_church" style="width:100%">
+                        <figcaption>Church<br>
+                            G (x or width, y or height): (3, 25)<br>
+                            R (x or width, y or height): (-4, 58)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/cropped_out_3ch_ssim_emir.tif.jpg" alt="ssim_emir" style="width:100%">
+                        <figcaption>Emir<br>
+                            G (x or width, y or height): (21, 50)<br>
+                            R (x or width, y or height): (40, 105)
+                        </figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="explanation">
+        <h2>Bells & Whistles: Automatic Cropping</h2>
+        <p>
+            Canny Edge Detection<br>
+            - Detect edges in image<br><br>
+
+            Create Cropping Mask<br>
+            - Only keep edges in outer 10% of image<br>
+            - Choose borders that are "straight enough": makes up 'line_thres' proportion of a straight line<br><br>
+
+            Crop Image<br>
+            - Crop image with determined borders
+        </p>
+    </div>
+
+    <div class="imageSections">
+        <h3><b>Case 1:</b> Monastery</h3>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/auto1_out_3ch_ncc_monastery.jpg.jpg" alt="auto1_monastery" style="width:100%">
+                        <figcaption>1. Before Cropping</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/auto2_out_3ch_ncc_monastery.jpg.jpg" alt="auto2_cmonastery" style="width:100%">
+                        <figcaption>2. Edges Detected</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/auto3_out_3ch_ncc_monastery.jpg.jpg" alt="auto3_cmonastery" style="width:100%">
+                        <figcaption>3. Keep Outer 10%</figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/auto4_out_3ch_ncc_monastery.jpg.jpg" alt="auto4_monastery" style="width:100%">
+                        <figcaption>4. Final Cropping Mask<br>
+                            (Top, Bottom, Left, Right): (14, 314, 19, 379)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/auto_cropped_out_3ch_ncc_monastery.jpg.jpg" alt="auto_monastery"
+                            style="width:100%">
+                        <figcaption>5. Cropped Image</figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+        <h3><b>Case 2:</b> Cathedral</h3>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/auto1_out_3ch_ncc_cathedral.jpg.jpg" alt="auto1_cathedral" style="width:100%">
+                        <figcaption>1. Before Cropping</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/auto2_out_3ch_ncc_cathedral.jpg.jpg" alt="auto2_cathedral" style="width:100%">
+                        <figcaption>2. Edges Detected</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/auto3_out_3ch_ncc_cathedral.jpg.jpg" alt="auto3_cathedral" style="width:100%">
+                        <figcaption>3. Keep Outer 10%</figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="media/auto4_out_3ch_ncc_cathedral.jpg.jpg" alt="auto4_cathedral" style="width:100%">
+                        <figcaption>4. Final Cropping Mask<br>
+                            (Top, Bottom, Left, Right): (8, 315, 14, 371)
+                        </figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/auto_cropped_out_3ch_ncc_cathedral.jpg.jpg" alt="auto_cathedral"
+                            style="width:100%">
+                        <figcaption>5. Cropped Image</figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+
+</html>
