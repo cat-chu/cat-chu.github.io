@@ -71,19 +71,19 @@
     <div class="explanation">
         <h2>Approach</h2>
         <p>
-            Overview<br>
+            <i>Overview</i><br>
             This project...<br><br>
 
-            Coarsest Image<br>
+            <i>Coarsest Image</i><br>
             - Downsample original image such that its shortest side is rescaled to be as close to 100 as possible<br>
             - Try displacements within +/- 8% of image width and length (naive implementation)<br><br>
 
-            Coarse-to-Fine Image Pyramid<br>
+            <i>Coarse-to-Fine Image Pyramid</i><br>
             - Scale up coarse images (and optimal displacements) by a factor of 2<br>
             - Try displacements within +/- 1% of optimal displacement<br>
             - Significantly reduces alignment speed<br><br>
 
-            Image Matching Evaluation Metric<br>
+            <i>Image Matching Evaluation Metric</i><br>
             - NCC: dot product between two normalized vectors<br>
             - SSIM: structural similarity index (considers luminance, contrast structure)<br>
             - Performs better for images like emir.tif, but runs 4x slower
@@ -236,7 +236,7 @@
                 </td>
             </tr>
         </table>
-        <h3>High-Resolution jpg Images with SSIM</h3>
+        <h3>High-Resolution tif Images with SSIM</h3>
         <table>
             <tr>
                 <td>
@@ -264,14 +264,14 @@
     <div class="explanation">
         <h2>Bells & Whistles: Automatic Cropping</h2>
         <p>
-            Canny Edge Detection<br>
+            <i>Canny Edge Detection</i><br>
             - Detect edges in image<br><br>
 
-            Create Cropping Mask<br>
+            <i>Create Cropping Mask</i><br>
             - Only keep edges in outer 10% of image<br>
             - Choose borders that are "straight enough": makes up 'line_thres' proportion of a straight line<br><br>
 
-            Crop Image<br>
+            <i>Crop Image</i><br>
             - Crop image with determined borders
         </p>
     </div>
@@ -305,7 +305,7 @@
                 <td>
                     <figure>
                         <img src="media/auto4_out_3ch_ncc_monastery.jpg.jpg" alt="auto4_monastery" style="width:100%">
-                        <figcaption>4. Final Cropping Mask<br>
+                        <figcaption>4. Cropping Mask<br>
                             (Top, Bottom, Left, Right): (14, 314, 19, 379)
                         </figcaption>
                     </figure>
@@ -347,7 +347,7 @@
                 <td>
                     <figure>
                         <img src="media/auto4_out_3ch_ncc_cathedral.jpg.jpg" alt="auto4_cathedral" style="width:100%">
-                        <figcaption>4. Final Cropping Mask<br>
+                        <figcaption>4. Cropping Mask<br>
                             (Top, Bottom, Left, Right): (8, 315, 14, 371)
                         </figcaption>
                     </figure>
