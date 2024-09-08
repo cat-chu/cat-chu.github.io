@@ -5,9 +5,19 @@
     <title>My Portfolio</title>
     <style>
         body {
-            background-color: lightgray;
-            font-family: Verdana, sans-serif;
+            background-color: gainsboro;
+            font-family: Optima, sans-serif;
+            color: #383838;
             margin: 40px;
+        }
+
+        .name {
+            color: dimgray;
+        }
+
+        .text {
+            margin-left: 70px;
+            margin-right: 70px;
         }
 
         .row {
@@ -29,6 +39,10 @@
             text-align: center;
         }
 
+        img {
+            border-radius: 5%;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
@@ -40,16 +54,16 @@
 
         figcaption {
             padding: 2px;
-            font-size: 12px;
+            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
     <div class="Header">
-        <h1>Images of the Russian Empire:</h1>
-        <h2>Colorizing the Prokudin-Gorskii photo collection</h2>
-        <h2><i>Catherine Chu</i></h2>
+        <h1 class="projectName">Images of the Russian Empire:</h1>
+        <h2 class="projectName">Colorizing the Prokudin-Gorskii photo collection</h2>
+        <h2 class="name"><i>Catherine Chu</i></h2>
     </div>
 
 
@@ -64,29 +78,43 @@
 
     <div class="caption">
         <p> <b>Left:</b> Glass plate image of Emir of Bukhara.
-            <b>Right:</b> Aligned 3-color channel RGB image.
+            <b>Right:</b> Aligned 3-color (RGB) image.
         </p>
     </div>
 
     <div class="explanation">
         <h2>Approach</h2>
-        <p>
-            <i>Overview</i><br>
-            This project...<br><br>
+        <p class="text">
+            <i>Overview</i><br><br>
+            This project takes digitized Prokudin-Gorskii glass plate images and produces their respective color images.
+            The glass plates contain images from three color channels, RGB, which are extracted and aligned with image
+            processing techniques. More specifically, the R and G components are aligned to the B component.
+            <br><br><br>
 
-            <i>Coarsest Image</i><br>
-            - Downsample original image such that its shortest side is rescaled to be as close to 100 as possible<br>
-            - Try displacements within +/- 8% of image width and length (naive implementation)<br><br>
+            <i>Coarsest Image</i><br><br>
+            The alignment process starts at the coarsest (smallest) scale. The image is downsampled until its
+            shortest side is rescaled to be as close to 100 pixels as possible. Then, displacements within +/-8% of the
+            image width and length are iterated through and tested. The displacement that matches closest
+            with the B part (more in the "Image Matching Evaluation Metric" section) is then returned. One of
+            these searches reflects the single-scale implementation.<br><br><br>
 
-            <i>Coarse-to-Fine Image Pyramid</i><br>
-            - Scale up coarse images (and optimal displacements) by a factor of 2<br>
-            - Try displacements within +/- 1% of optimal displacement<br>
-            - Significantly reduces alignment speed<br><br>
+            <i>Coarse-to-Fine Image Pyramid</i><br><br>
+            Because single-scale exhaustive search would be too expensive for large (e.g. .tif) images, the procedure
+            starts with the coarsest image and works its way up the "image pyramid." The images and optimal
+            displacements are scaled up by a factor of 2, and for larger images, only displacements within +/-1 pixel
+            of the optimal displacement are evaluated. This strategy significant reduces the number of displacements
+            tested and, therefore, alignment speed.<br><br><br>
 
-            <i>Image Matching Evaluation Metric</i><br>
-            - NCC: dot product between two normalized vectors<br>
-            - SSIM: structural similarity index (considers luminance, contrast structure)<br>
-            - Performs better for images like emir.tif, but runs 4x slower
+            <i>Image Matching Evaluation Metric</i><br><br>
+            Two image matching evaluation merics are used:
+        </p>
+        <ul class="text">
+            <li>NCC: dot product between two normalized vectors</li>
+            <li>SSIM: structural similarity index (considers luminance, contrast, structure)</li>
+        </ul>
+        <p class="text">
+            Since the SSIM metric is more advanced, it performs better for images like emir.tif, but at the cost of
+            running ~4x slower.
         </p>
     </div>
 
@@ -263,16 +291,19 @@
 
     <div class="explanation">
         <h2>Bells & Whistles: Automatic Cropping</h2>
-        <p>
-            <i>Canny Edge Detection</i><br>
-            - Detect edges in image<br><br>
+        <p class="text">
+            <i>Canny Edge Detection</i><br><br>
+            This automatic cropping idea starts with detecting all edges in the color image using a <i>canny edge
+                detector</i>.<br><br><br>
 
-            <i>Create Cropping Mask</i><br>
-            - Only keep edges in outer 10% of image<br>
-            - Choose borders that are "straight enough": makes up 'line_thres' proportion of a straight line<br><br>
+            <i>Create Cropping Mask</i><br><br>
+            Next, only edges in the outer 10% of the image are kept and evaluated as potential borders. Iterating from
+            the innermost to outermost potential borders, a border is chosen if it is "straight enough" -- the
+            qualification is making up at least a certain threshold proportion of the full straight line. The final
+            borders can be visualized by a mask.<br><br><br>
 
-            <i>Crop Image</i><br>
-            - Crop image with determined borders
+            <i>Crop Image</i><br><br>
+            The original image is cropped with the determined borders.
         </p>
     </div>
 
@@ -314,7 +345,7 @@
                     <figure>
                         <img src="media/auto_cropped_out_3ch_ncc_monastery.jpg.jpg" alt="auto_monastery"
                             style="width:100%">
-                        <figcaption>5. Cropped Image</figcaption>
+                        <figcaption><i>5. Cropped Image</i></figcaption>
                     </figure>
                 </td>
             </tr>
@@ -356,7 +387,7 @@
                     <figure>
                         <img src="media/auto_cropped_out_3ch_ncc_cathedral.jpg.jpg" alt="auto_cathedral"
                             style="width:100%">
-                        <figcaption>5. Cropped Image</figcaption>
+                        <figcaption><i>5. Cropped Image</i></figcaption>
                     </figure>
                 </td>
             </tr>
