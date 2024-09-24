@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Portfolio</title>
+    <style>
+        body {
+            background-color: gainsboro;
+            font-family: Optima, sans-serif;
+            color: #383838;
+            margin: 40px;
+        }
+
+        .name {
+            color: dimgray;
+        }
+
+        .text {
+            margin-left: 70px;
+            margin-right: 70px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        /* .column {
+            padding: 5px;
+        } */
+
+        .caption {
+            text-align: center;
+        }
+
+        .imageSections {
+            text-align: center;
+        }
+
+        img {
+            padding: 5px;
+            border-radius: 8%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        figcaption {
+            padding: 2px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Header">
+        <h1 class="projectName">Fun with Filters and Frequencies!</h1>
+        <h2 class="name"><i>Catherine Chu</i></h2>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 1.1: Finite Difference Operator</h2>
+        <div class="row">
+            <img src="media/orig_cam.png" alt="orig_cam" style="width:200px">
+        </div>
+        <p class="text">
+            To begin, the cameraman image is convolved with both finite difference operators <b>D_x</b> and <b>D_y</b>.
+            The gradient magnitude is calculated by taking the magnitude, or norm, of these gradient components:
+            <code>grad_mag = np.sqrt(dx**2 + dy**2)</code>. This gradient magnitude image is binarized with a selected
+            threshold, where values above the threshold qualify and are displayed as edges.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/dx.jpg" alt="dx" style="width:100%">
+                            <figcaption>dx</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/dy.jpg" alt="dy" style="width:100%">
+                            <figcaption>dy</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/gm.jpg" alt="gm" style="width:100%">
+                            <figcaption>Gradient Magnitude</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/bgm.jpg" alt="bgm" style="width:100%">
+                            <figcaption>Binarized</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 1.2: Derivative of Gaussian (DoG) Filter</h2>
+        <p class="text">
+            Seeing that the edges detected above are rather noisy, the cameraman image can be blurred before performing
+            the process, as shown below. The differences that we see include the edges being thicker and smoother, as
+            well as less noise on the man, camera, and background.
+        </p>
+        <div class="row">
+            <img src="media/blur_cam.jpg" alt="blur_cam" style="width:200px">
+        </div>
+        <div class="caption">
+            <p><i>Blurred cameraman image</i></p>
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/blur_bgm.jpg" alt="blur_dx" style="width:100%">
+                            <figcaption>dx</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/blur_dy.jpg" alt="blur_dy" style="width:100%">
+                            <figcaption>dy</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/blur_gm.jpg" alt="blur_gm" style="width:100%">
+                            <figcaption>Gradient Magnitude</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/blur_bgm.jpg" alt="blur_bgm" style="width:100%">
+                            <figcaption>Binarized</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="text">
+            Blurring and computing the gradient magnitude can also be completed in a single convolution: by convolving
+            the blurring/gaussian filter with <b>D_x</b> and <b>D_y</b>, the resulting DoG filters can be directly
+            applied to the original cameraman image.
+        </p>
+        <div class="row">
+            <img src="media/gdx_filter.jpg" alt="gdx_filter" style="width:200px">
+            <img src="media/gdy_filter.jpg" alt="gdy_filter" style="width:200px">
+        </div>
+        <div class="caption">
+            <p><i>DoG filters: with respect to x on the left, y on the right</i></p>
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/gdx.jpg" alt="gdx" style="width:100%">
+                            <figcaption> Gaussian dx</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/gdy.jpg" alt="gdy" style="width:100%">
+                            <figcaption>Gaussian dy</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/dog_gm.jpg" alt="dog_gm" style="width:100%">
+                            <figcaption>Gradient Magnitude</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/dog_bgm.jpg" alt="dog_bgm" style="width:100%">
+                            <figcaption>Binarized</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 2.1: Image "Sharpening"</h2>
+
+        <p class="text">Images can be "sharpened" using the unsharp masking technique. This can be done in two ways:</p>
+        <ul class="text">
+            <li>Subtract the blurred image from the original and add <code>alpha</code> times of the remaining high
+                frequencies back to the original</li>
+            <li>Combine the above strategy into a single convolution operation called the unsharp mask filter</li>
+        </ul>
+        <p class="text">Below are results for different values of alpha, showing the progression of the original to
+            sharpened images.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/taj.jpg" alt="taj" style="width:100%">
+                            <figcaption>Taj Mahal</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/taj1.jpg" alt="taj1" style="width:100%">
+                            <figcaption><code>alpha</code>=1</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/taj2.jpg" alt="taj2" style="width:100%">
+                            <figcaption><code>alpha</code>=2</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/taj4.jpg" alt="taj4" style="width:100%">
+                            <figcaption><code>alpha</code>=4</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/bridge.jpg" alt="bridge" style="width:100%">
+                            <figcaption>Golden Gate Bridge</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/bridge1.jpg" alt="bridge1" style="width:100%">
+                            <figcaption><code>alpha</code>=1</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/bridge2.jpg" alt="bridge2" style="width:100%">
+                            <figcaption><code>alpha</code>=2</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/bridge4.jpg" alt="bridge4" style="width:100%">
+                            <figcaption><code>alpha</code>=4</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="text">The following progression tries first blurring, then sharpening an image. The sharpened image
+            clearly loses a lot of the original's detail, is noisy, and contains artifacts.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ny.jpg" alt="ny" style="width:100%">
+                            <figcaption>Little Island, NY</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/blur_ny.jpg" alt="blur_ny" style="width:100%">
+                            <figcaption>Blurred</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ny4.jpg" alt="ny4" style="width:100%">
+                            <figcaption>Sharpened<br>(<code>alpha</code>=4)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="explanation">
+        <h2>Part 2.2: Hybrid Images</h2>
+        <p class="text">
+            Hybrid images (are static images! that) change with the viewer's distance to the image. From the blending of
+            high frequencies of one image with low frequencies of another, the viewer sees the first image when
+            they are up close, and the second when they are far.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/nutmeg.jpg" alt="nutmeg" style="width:100%">
+                            <figcaption>Nutmeg (High)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/derek.jpg" alt="derek" style="width:100%">
+                            <figcaption>Derek (Low)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/nutmeg_derek.jpg" alt="gm" style="width:110%">
+                            <figcaption>Nutmeg + Derek</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/puppy.jpg" alt="puppy" style="width:100%">
+                            <figcaption>Puppy (High)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/nugget.jpg" alt="nugget" style="width:100%">
+                            <figcaption>Nugget (Low)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/puppy_nugget.jpg" alt="puppy_nugget" style="width:110%">
+                            <figcaption>Puppy + Nugget</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="text"></p>
+        This is an example of a failure. Since the shapes of Eren's normal face and Eren's Titan face are different
+        sizes, it was difficult to align the two images (the final attempt tries to align the noses), resulting in a
+        less convincing hybrid image.
+        </p>
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/titan.jpg" alt="titan" style="width:100%">
+                            <figcaption>Titan (High)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/old.jpg" alt="old" style="width:100%">
+                            <figcaption>Eren (Low)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/titan_old.jpg" alt="titan_old" style="width:110%">
+                            <figcaption>Titan + Eren</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="text"></p>
+        The following also demonstrates a Fourier analysis. The two filtered versions of the input images keep the
+        respective high and low frequencies, which are then combined for the final hybrid image.
+        </p>
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/young.jpg" alt="young" style="width:100%">
+                            <figcaption>Young Eren (High)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/old.jpg" alt="old" style="width:100%">
+                            <figcaption>Old Eren (Low)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/young_old.jpg" alt="young_old" style="width:110%">
+                            <figcaption>Young + Old</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/fa_in_young.png" alt="fa_in_young" style="width:100%">
+                            <figcaption>Young Eren</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/fa_in_old.png" alt="fa_in_old" style="width:120%">
+                            <figcaption>Old Eren</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/fa_fil_young.png" alt="fa_fil_young" style="width:80%">
+                            <figcaption>Young Eren Filtered</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/fa_fil_old.png" alt="fa_fil_old" style="width:100%">
+                            <figcaption>Old Eren Filtered</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/fa_hybrid.png" alt="fa_hybrid" style="width:100%">
+                            <figcaption>Young + Old Filtered</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="explanation">
+        <h2>Part 2.3: Gaussian and Laplacian Stacks</h2>
+        <p class="text">
+            Before multi-resolution blending, Gaussian and Laplacian stacks are created. Gaussian stacks involve
+            repeatedly applying the Gaussian filter at each level of the stack, and Laplacian stacks involve subtracting
+            a level of the Gaussian stack from the previous level. However, the final level of the Laplacian matches the
+            final level of the Gaussian so that the original image can be reconstructed by collapsing the Laplacian
+            stack.<br><br>
+
+            Stacks of an apple:
+        </p>
+
+        <div class="row">
+            <img src="media/apple.jpeg" alt="apple" style="width:200px">
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/apple_g1.jpg" alt="apple_g1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_g2.jpg" alt="apple_g2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_g3.jpg" alt="apple_g3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_g4.jpg" alt="apple_g4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_g5.jpg" alt="apple_g5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="caption">
+            <p><i>Gaussian stack of apple</i></p>
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/apple_l1.jpg" alt="apple_l1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_l2.jpg" alt="apple_l2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_l3.jpg" alt="apple_l3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_l4.jpg" alt="apple_l4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/apple_l5.jpg" alt="apple_l5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="caption">
+            <p><i>Laplacian stack of apple</i></p>
+        </div>
+
+        <p><br><br>Stacks of an orange:
+        </p>
+        <div class="row">
+            <img src="media/orange.jpeg" alt="orange" style="width:200px">
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/orange_g1.jpg" alt="orange_g1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_g2.jpg" alt="orange_g2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_g3.jpg" alt="apple_g3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_g4.jpg" alt="orange_g4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_g5.jpg" alt="orange_g5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="caption">
+            <p><i>Gaussian stack of orange</i></p>
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/orange_l1.jpg" alt="orange_l1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_l2.jpg" alt="orange_l2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_l3.jpg" alt="orange_l3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_l4.jpg" alt="orange_l4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/orange_l5.jpg" alt="orange_l5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="caption">
+            <p><i>Laplacian stack of orange</i></p>
+        </div>
+
+    </div>
+
+    <div class="explanation">
+        <h2>Part 2.4: Finite Difference Operator</h2>
+        <p class="text">
+            To perform multi-resolution blending, each level of the Laplacian stacks across two images are blended
+            together. This blending works best with similar Gaussian blurring of a mask. The combined layers are
+            finally compressed into the blended image.
+        </p>
+
+        <div class="row">
+            <img src="media/oraple.jpg" alt="oraple" style="width:200px">
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/oraple_l1.jpg" alt="oraple_l1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/oraple_l2.jpg" alt="oraple_l2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/oraple_l3.jpg" alt="oraple_l3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/oraple_l4.jpg" alt="oraple_l4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/oraple_l5.jpg" alt="oraple_l5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="caption">
+            <p><i>Combined Laplacian stacks to create oraple</i><br><br></p>
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/mario.jpg" alt="mario" style="width:100%">
+                            <figcaption>Mario</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/peach.jpg" alt="peach" style="width:100%">
+                            <figcaption>Peach</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/princess_mario.jpg" alt="princess_mario" style="width:110%">
+                            <figcaption>Princess Mario</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/prin_mario1.jpg" alt="prin_mario1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/prin_mario2.jpg" alt="prin_mario2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/prin_mario3.jpg" alt="prin_mario3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/prin_mario4.jpg" alt="prin_mario4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/prin_mario5.jpg" alt="prin_mario5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="caption">
+            <p><i>High-resolution blending of Mario and Princess Peach</i></p>
+        </div>
+
+        <p class="text"><br><br></p>The following blending example involves an irregular mask:</p>
+        <div class="row">
+            <img src="media/irreg_mask.jpg" alt="irreg_mask" style="width:200px">
+        </div>
+        <div class="caption">
+            <p><i>Irregular mask</i></p>
+        </div>
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/cat.jpg" alt="cat" style="width:100%">
+                            <figcaption>Cat</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/avengers.jpg" alt="avengers" style="width:90%">
+                            <figcaption>Avengers</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/angry_avengers.jpg" alt="angry_avengers" style="width:110%">
+                            <figcaption>Angry Avengers</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/ang_aven1.jpg" alt="ang_aven1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/ang_aven2.jpg" alt="ang_aven2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/ang_aven3.jpg" alt="ang_aven3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/ang_aven4.jpg" alt="ang_aven4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/ang_aven5.jpg" alt="ang_aven5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="caption">
+            <p><i>High-resolution blending of Angry Cat and Avengers</i></p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
