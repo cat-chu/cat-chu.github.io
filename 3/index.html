@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Portfolio</title>
+    <style>
+        body {
+            background-color: gainsboro;
+            font-family: Optima, sans-serif;
+            color: #383838;
+            margin: 40px;
+        }
+
+        .name {
+            color: dimgray;
+        }
+
+        .text {
+            margin-left: 70px;
+            margin-right: 70px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        /* .column {
+            padding: 5px;
+        } */
+
+        .caption {
+            text-align: center;
+        }
+
+        .imageSections {
+            text-align: center;
+        }
+
+        .double {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        img {
+            padding: 10px;
+            border-radius: 8%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        figcaption {
+            padding: 2px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Header">
+        <h1 class="projectName">Face Morphing</h1>
+        <h2 class="name"><i>Catherine Chu</i></h2>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 1: Defining Correspondences</h2>
+        <p class="text">
+            The first part of this project involves defining correspondences, or pairs of corresponding points that
+            relate two images. These points must be consistent labels between eyes, noses and other notable features and
+            are selected with <a href="https://cal-cs180.github.io/fa23/hw/proj3/tool.html">this tool</a>. Then,
+            Delaunay triangulation is performed on the mid-way shape. The respective triangulation of the two selected
+            faces (me and Victoria DeAngelis) is shown below.
+        </p>
+
+        <div class="double">
+            <figure>
+                <img src="media/me_triangulation.png" alt="me_triangulation" style="width:300px">
+                <figcaption>Me Triangulation</figcaption>
+            </figure>
+            <figure>
+                <img src="media/vic_triangulation.png" alt="vic_triangulation" style="width:300px">
+                <figcaption>Vic Triangulation</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 2: Computing the "Mid-way Face"</h2>
+        <p class="text">
+            To compute the mid-way face between me and Vic, (1) the average shape is computed, (2) both faces are warped
+            into that shape and (3) the colors are averaged. Inverse warping is implemented with an affine warp for each
+            triangle in the triangulation above. The colors of the mid-way image are then interpolated and averaged.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/me.jpg" alt="me" style="width:100%">
+                            <figcaption>Me</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/midway.jpg" alt="midway" style="width:100%">
+                            <figcaption>Mid-way</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/vic.jpg" alt="vic" style="width:100%">
+                            <figcaption>Vic</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 3: The Morph Sequence</h2>
+        <p class="text">
+            Next, the function <code>morph(im1, im2, im1_pts, im2_pts, tri, warp_frac, dissolve_frac)</code> is created
+            to perform a warp between <code>im1</code> (me) and <code>im2</code> (Vic). The video sequence of a morph
+            from my face to Vic's face is shown in the following gif, which has 45 1/30-second frames.
+        </p>
+
+        <div class="row">
+            <img src="media/morphed_me_vic.gif" alt="morphed_me_vic" style="width:400px">
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 4: The "Mean Face" of a Population</h2>
+        <p class="text">
+            The <a href="https://fei.edu.br/~cet/facedatabase.html">FEI Face Database</a> has a collection of frontal
+            images of 200 individuals with a smiling facial expression. First, the average face shape of this
+            population is computed. Then, faces in the dataset are morphed into the average shape. Some examples:
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/1b.jpg" alt="1b" style="width:100%">
+                            <figcaption>1b...</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/fei_1b_warped.jpg" alt="fei_1b_warped" style="width:100%">
+                            <figcaption>Warped</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/5b.jpg" alt="5b" style="width:100%">
+                            <figcaption>5b...</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/fei_5b_warped.jpg" alt="fei_5b_warped" style="width:100%">
+                            <figcaption>Warped</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/130b.jpg" alt="130b" style="width:100%">
+                            <figcaption>130b...</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/fei_130b_warped.jpg" alt="fei_130b_warped" style="width:100%">
+                            <figcaption>Warped</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/199b.jpg" alt="199b" style="width:100%">
+                            <figcaption>199b...</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/fei_199b_warped.jpg" alt="fei_199b_warped" style="width:100%">
+                            <figcaption>Warped</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="text">
+            Next, the average face of the population (the average of all warped faces) is computed:
+        </p>
+        <div class="row">
+            <img src="media/avg.jpg" alt="avg" style="width:300px">
+        </div>
+        <p class="text">
+            On the left, my face is warped into the average geometry. On the right, the average face is warped into my
+            geometry:
+        </p>
+
+        <div class="double">
+            <figure>
+                <img src="media/me_to_avg.jpg" alt="me_to_avg" style="width:200px">
+                <figcaption>Me to Avg</figcaption>
+            </figure>
+            <figure>
+                <img src="media/avg_to_me.jpg" alt="avg_to_me" style="width:200px">
+                <figcaption>Avg to Me</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 5: Caricatures: Extrapolating from the Mean</h2>
+        <p class="text">
+            The average smiling face above can also be used to generate caricatures. In the left image,
+            <code>warp_frac</code> is set to -0.5, exaggerating my geometry. In the
+            right image, it is set to 1.5, exaggerating the average geometry.
+        </p>
+
+        <div class="double">
+            <figure>
+                <img src="media/caricature_exaggerate_me.jpg" alt="caricature_exaggerate_me" style="width:200px">
+                <figcaption><code>dissolve_frac=-0.5</code></figcaption>
+            </figure>
+            <figure>
+                <img src="media/caricature_exaggerate_avg.jpg" alt="caricature_exaggerate_avg" style="width:200px">
+                <figcaption><code>dissolve_frac=1.5</code></figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Bells and Whistles</h2>
+        <p class="text">
+            The Bells and Whistles chosen is changing the gender of my face. This is done by morphing my face with
+            the
+            <a
+                href="https://pmsol3.wordpress.com/2009/10/10/world-of-facial-averages-east-southeast-asia-pacific-islander/">
+                average Chinese male face</a>.
+        <ol>
+            <li>The first image morphs only the shape</li>
+            <li>The second image morphs only the appearance</li>
+            <li>The third image morphs both shape and appearance</a></li>
+        </ol>
+        </p>
+
+        <div class="double">
+            <figure>
+                <img src="media/me_to_man_orig.jpg" alt="me_to_man_orig" style=" width:200px">
+                <figcaption>Me</figcaption>
+            </figure>
+
+            <figure>
+                <img src="media/avg_man.jpg" alt="avg_man" style="width:200px">
+                <figcaption>Average Chinese Man</figcaption>
+            </figure>
+        </div>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/shape_only.jpg" alt="shape_only" style="
+                                width:100%">
+                            <figcaption>Shape</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/appearance_only.jpg" alt="appearance_only" style="width:100%">
+                            <figcaption>Appearance</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/both.jpg" alt="both" style="width:100%">
+                            <figcaption>Both</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>
