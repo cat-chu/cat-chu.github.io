@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Portfolio</title>
+    <style>
+        body {
+            background-color: gainsboro;
+            font-family: Optima, sans-serif;
+            color: #383838;
+            margin: 40px;
+        }
+
+        .name {
+            color: dimgray;
+        }
+
+        .text {
+            margin-left: 70px;
+            margin-right: 70px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        /* .column {
+            padding: 5px;
+        } */
+
+        .caption {
+            text-align: center;
+        }
+
+        .imageSections {
+            text-align: center;
+        }
+
+        .double {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        img {
+            padding: 10px;
+            border-radius: 8%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        figcaption {
+            padding: 2px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Header">
+        <h1 class="projectName">[Auto]Stitching Photo Mosaics</h1>
+        <h2 class="name"><i>Catherine Chu</i></h2>
+    </div>
+
+    <div class="Header">
+        <h1 class="projectName">Part A: Image Warping and Mosaicing</h1>
+    </div>
+
+    <div class="explanation">
+        <h2>Recover Homographies</h2>
+        <p class="text">
+            To start, correspondences are labeled among the pictures taken. In order to warp images to align with the
+            reference image, homography H (defining transformation p'=Hp) is recovered. This step is implemented in
+            the function <code>H = computeH(im1_pts, im2_pts)</code>. To ensure the stability of H, more than 4
+            correspondences are used to produce an overdetermined system, which is solved with least squares.
+        </p>
+
+        <div class="double">
+            <figure>
+                <img src="media/left_porch_pts.png" alt="left_porch_pts" style="width:300px">
+                <figcaption>Porch (Left)</figcaption>
+            </figure>
+            <figure>
+                <img src="media/right_porch_pts.png" alt="right_porch_pts" style="width:300px">
+                <figcaption>Porch (Right)</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Warp the Images</h2>
+        <p class="text">
+            Next <code>warpImage(im, H)</code> leverages the recovered homography H to perform inverse warping. The
+            size, or bounding box, of the warped image is predicted by piping the 4 corners of the original image
+            through H. Then, the bounding box is inverse warped onto the original image, where an alpha mask drops
+            "invalid" (x,y)'s outside of the original image's dimensions. Finally, this warped image's values are
+            resampled with scipy's <code>RegularGridInterpolator</code>.
+        </p>
+    </div>
+
+    <div class="explanation">
+        <h2>Image Rectification</h2>
+        <p class="text">
+            To test the above functions, "rectification" is performed on two example images. In both cases, the post-it
+            note is "made rectangular" using a homography.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/pi1.png" alt="pi1" style="height:300px">
+                            <figcaption>Original Image</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/pi1_rect.jpg" alt="pi1_rect" style="height:300px">
+                            <figcaption>Rectification</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/pi1_rect_cropped.jpg" alt="pi1_rect_cropped" style="height:200px">
+                            <figcaption>Cropped</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/pi2.png" alt="pi2" style="height:300px">
+                            <figcaption>Original Image</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/pi2_rect.jpg" alt="pi2_rect" style="height:300px">
+                            <figcaption>Rectification</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/pi2_rect_cropped.jpg" alt="pi2_rect_cropped" style="height:200px">
+                            <figcaption>Cropped</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Blend the images into a mosaic</h2>
+        <p class="text">
+            The images are warped to create an image mosaic. Specifically, the left image of the porch is warped
+            in reference to the right image of the porch, which is positioned accordingly.
+        </p>
+        <div class="double">
+            <figure>
+                <img src="media/left_rect.jpg" alt="left_rect" style="width:300px">
+                <figcaption>Porch (Left, Rectified)</figcaption>
+            </figure>
+            <figure>
+                <img src="media/right_rect.jpg" alt="right_rect" style="width:300px">
+                <figcaption>Porch (Right, Positioned)</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            The images need to be blended together into a single image. A naive approach involves setting alpha to 0.5
+            in the overlapping region:
+        </p>
+        <div class="row">
+            <img src="media/naive_blend.jpg" alt="naive_blend" style="width:400px">
+        </div>
+
+        <p class="text">
+            A second approach involves the distance transform, where alpha is 1 at the center of the original images,
+            then decreases to 0 at their edges. In the overlapping region, the left image's alpha is set to 1 if
+            its distance transform is greater than the right image's distance transform, and vice versa.
+        </p>
+        <div class="double">
+            <figure>
+                <img src="media/left_dist_tr.jpg" alt="left_dist_tr" style="width:300px">
+                <figcaption>Left Image's bwdist</figcaption>
+            </figure>
+            <figure>
+                <img src="media/right_dist_tr.jpg" alt="right_dist_tr" style="width:300px">
+                <figcaption>Right Image's bwdist</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            Moreover, the 2-band blending technique (with a 2-level image pyramid) can remedy wedge-like artifacts:
+        </p>
+        <div class="row">
+            <img src="media/final_blend.jpg" alt="final_blend" style="width:400px">
+        </div>
+        <div class="double">
+            <figure>
+                <img src="media/low_blend.jpg" alt="low_blend" style="width:300px">
+                <figcaption>Low Frequency Blend</figcaption>
+            </figure>
+            <figure>
+                <img src="media/high_blend.jpg" alt="high_blend" style="width:300px">
+                <figcaption>High Frequency Blend</figcaption>
+            </figure>
+        </div>
+    </div>
+
+</body>
+
+</html>
