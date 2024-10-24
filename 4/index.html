@@ -79,21 +79,57 @@
     <div class="explanation">
         <h2>Recover Homographies</h2>
         <p class="text">
-            To start, correspondences are labeled among the pictures taken. In order to warp images to align with the
+            To start, correspondences are labeled among the pictures taken. In order to warp an image to align with its
             reference image, homography H (defining transformation p'=Hp) is recovered. This step is implemented in
             the function <code>H = computeH(im1_pts, im2_pts)</code>. To ensure the stability of H, more than 4
             correspondences are used to produce an overdetermined system, which is solved with least squares.
         </p>
 
-        <div class="double">
-            <figure>
-                <img src="media/left_porch_pts.png" alt="left_porch_pts" style="width:300px">
-                <figcaption>Porch (Left)</figcaption>
-            </figure>
-            <figure>
-                <img src="media/right_porch_pts.png" alt="right_porch_pts" style="width:300px">
-                <figcaption>Porch (Right)</figcaption>
-            </figure>
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/left_porch_pts.png" alt="left_porch_pts" style="width:400px">
+                            <figcaption>Porch (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/right_porch_pts.png" alt="right_porch_pts" style="width:400px">
+                            <figcaption>Porch (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/left_hallway_pts.png" alt="left_hallway_pts" style="width:400px">
+                            <figcaption>Hallway (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/right_hallway_pts.png" alt="right_hallway_pts" style="width:400px">
+                            <figcaption>Hallway (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/top_shelf_pts.png" alt="top_shelf" style="height:400px">
+                            <figcaption>Shelf (Top)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/bottom_shelf_pts.png" alt="bottom_shelf" style="height:400px">
+                            <figcaption>Shelf (Bottom)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 
@@ -164,47 +200,196 @@
     <div class="explanation">
         <h2>Blend the images into a mosaic</h2>
         <p class="text">
-            The images are warped to create an image mosaic. Specifically, the left image of the porch is warped
-            in reference to the right image of the porch, which is positioned accordingly.
+            The images are warped to create an image mosaic. Specifically, the image on the left is warped
+            in reference to the image on the right, which is positioned accordingly.
         </p>
-        <div class="double">
+        <!-- <div class="double">
             <figure>
                 <img src="media/left_rect.jpg" alt="left_rect" style="width:300px">
-                <figcaption>Porch (Left, Rectified)</figcaption>
+                <figcaption>Porch (Left, Warped)</figcaption>
             </figure>
             <figure>
                 <img src="media/right_rect.jpg" alt="right_rect" style="width:300px">
                 <figcaption>Porch (Right, Positioned)</figcaption>
             </figure>
+        </div> -->
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/left_rect.jpg" alt="left_rect" style="width:400px">
+                            <figcaption>Porch (Left, Warped)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/right_rect.jpg" alt="right_rect" style="width:400px">
+                            <figcaption>Porch (Right, Positioned)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/left_hw_warp.jpg" alt="left_hw_warp" style="width:400px">
+                            <figcaption>Hallway (Left, Warped)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/right_hw_pos.jpg" alt="right_hw_pos" style="width:400px">
+                            <figcaption>Hallway (Right, Positioned)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/top_sh_warp.jpg" alt="top_sh_warp" style="height:400px">
+                            <figcaption>Shelf (Top, Warped)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/bot_sh_pos.jpg" alt="bot_sh_pos" style="height:400px">
+                            <figcaption>Shelf (Bottom, Positioned)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         <p class="text">
             The images need to be blended together into a single image. A naive approach involves setting alpha to 0.5
             in the overlapping region:
         </p>
-        <div class="row">
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/naive_blend.jpg" alt="naive_blend" style="width:300px">
+                            <figcaption>Porch</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/hw_naive_blend.jpg" alt="hw_naive_blend" style="width:300px">
+                            <figcaption>Hallway</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/sh_naive_blend.jpg" alt="sh_naive_blend" style="height:300px">
+                            <figcaption>Shelf</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- <div class="row">
             <img src="media/naive_blend.jpg" alt="naive_blend" style="width:400px">
         </div>
+        <div class="row">
+            <img src="media/hw_naive_blend.jpg" alt="hw_naive_blend" style="width:400px">
+        </div>
+        <div class="row">
+            <img src="media/sh_naive_blend.jpg" alt="sh_naive_blend" style="width:400px">
+        </div> -->
 
         <p class="text">
             A second approach involves the distance transform, where alpha is 1 at the center of the original images,
             then decreases to 0 at their edges. In the overlapping region, the left image's alpha is set to 1 if
             its distance transform is greater than the right image's distance transform, and vice versa.
         </p>
-        <div class="double">
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/left_dist_tr.jpg" alt="left_dist_tr" style="width:300px">
+                            <figcaption> Left Porch's bwdist</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/right_dist_tr.jpg" alt="right_dist_tr" style="width:300px">
+                            <figcaption>Right Porch's bwdist</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <td>
+                    <figure>
+                        <img src="media/hw_left_dist_tr.jpg" alt="hw_left_dist_tr" style="width:300px">
+                        <figcaption>Left Hallway's bwdist</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/hw_right_dist_tr.jpg" alt="hw_right_dist_tr" style="width:300px">
+                        <figcaption>Right Hallway's bwdist</figcaption>
+                    </figure>
+                </td>
+                </tr>
+                <td>
+                    <figure>
+                        <img src="media/sh_top_dist_tr.jpg" alt="sh_top_dist_tr" style="height:300px">
+                        <figcaption>Top Shelf's bwdist</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="media/sh_bot_dist_tr.jpg" alt="sh_bot_dist_tr" style="height:300px">
+                        <figcaption>Bottom Shelf's bwdist</figcaption>
+                    </figure>
+                </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- <div class="double">
             <figure>
                 <img src="media/left_dist_tr.jpg" alt="left_dist_tr" style="width:300px">
-                <figcaption>Left Image's bwdist</figcaption>
+                <figcaption> Left Porch's bwdist</figcaption>
             </figure>
             <figure>
                 <img src="media/right_dist_tr.jpg" alt="right_dist_tr" style="width:300px">
-                <figcaption>Right Image's bwdist</figcaption>
+                <figcaption>Right Porch's bwdist</figcaption>
             </figure>
         </div>
+        <div class="double">
+            <figure>
+                <img src="media/hw_left_dist_tr.jpg" alt="hw_left_dist_tr" style="width:300px">
+                <figcaption>Left Hallway's bwdist</figcaption>
+            </figure>
+            <figure>
+                <img src="media/hw_right_dist_tr.jpg" alt="hw_right_dist_tr" style="width:300px">
+                <figcaption>Right Hallway's bwdist</figcaption>
+            </figure>
+        </div>
+        <div class="double">
+            <figure>
+                <img src="media/sh_top_dist_tr.jpg" alt="sh_top_dist_tr" style="height:300px">
+                <figcaption>Top Shelf's bwdist</figcaption>
+            </figure>
+            <figure>
+                <img src="media/sh_bot_dist_tr.jpg" alt="sh_bot_dist_tr" style="height:300px">
+                <figcaption>Bottom Shelf's bwdist</figcaption>
+            </figure>
+        </div> -->
 
         <p class="text">
-            Moreover, the 2-band blending technique (with a 2-level image pyramid) can remedy wedge-like artifacts:
+            Moreover, the 2-band blending technique (with a 2-level image pyramid) can remedy wedge-like
+            artifacts:<br><br>
+            <i>Porch Results...</i>
         </p>
+        </p>
+
         <div class="row">
             <img src="media/final_blend.jpg" alt="final_blend" style="width:400px">
         </div>
@@ -215,6 +400,40 @@
             </figure>
             <figure>
                 <img src="media/high_blend.jpg" alt="high_blend" style="width:300px">
+                <figcaption>High Frequency Blend</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            <i>Hallway Results...</i>
+        </p>
+        <div class="row">
+            <img src="media/hw_final_dist_tr_blend.jpg" alt="hw_final_dist_tr_blend" style="width:400px">
+        </div>
+        <div class="double">
+            <figure>
+                <img src="media/hw_low_blend.jpg" alt="hw_low_blend" style="width:300px">
+                <figcaption>Low Frequency Blend</figcaption>
+            </figure>
+            <figure>
+                <img src="media/hw_high_blend.jpg" alt="hw_high_blend" style="width:300px">
+                <figcaption>High Frequency Blend</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            <i>Shelf Results...</i>
+        </p>
+        <div class="row">
+            <img src="media/sh_final_dist_tr_blend.jpg" alt="sh_final_dist_tr_blend" style="height:400px">
+        </div>
+        <div class="double">
+            <figure>
+                <img src="media/sh_low_blend.jpg" alt="sh_low_blend" style="height:300px">
+                <figcaption>Low Frequency Blend</figcaption>
+            </figure>
+            <figure>
+                <img src="media/sh_high_blend.jpg" alt="sh_high_blend" style="height:300px">
                 <figcaption>High Frequency Blend</figcaption>
             </figure>
         </div>
