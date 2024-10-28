@@ -203,16 +203,6 @@
             The images are warped to create an image mosaic. Specifically, the image on the left is warped
             in reference to the image on the right, which is positioned accordingly.
         </p>
-        <!-- <div class="double">
-            <figure>
-                <img src="media/left_rect.jpg" alt="left_rect" style="width:300px">
-                <figcaption>Porch (Left, Warped)</figcaption>
-            </figure>
-            <figure>
-                <img src="media/right_rect.jpg" alt="right_rect" style="width:300px">
-                <figcaption>Porch (Right, Positioned)</figcaption>
-            </figure>
-        </div> -->
 
         <div class="imageSections">
             <table>
@@ -291,16 +281,6 @@
             </table>
         </div>
 
-        <!-- <div class="row">
-            <img src="media/naive_blend.jpg" alt="naive_blend" style="width:400px">
-        </div>
-        <div class="row">
-            <img src="media/hw_naive_blend.jpg" alt="hw_naive_blend" style="width:400px">
-        </div>
-        <div class="row">
-            <img src="media/sh_naive_blend.jpg" alt="sh_naive_blend" style="width:400px">
-        </div> -->
-
         <p class="text">
             A second approach involves the distance transform, where alpha is 1 at the center of the original images,
             then decreases to 0 at their edges. In the overlapping region, the left image's alpha is set to 1 if
@@ -351,37 +331,6 @@
                 </tr>
             </table>
         </div>
-
-        <!-- <div class="double">
-            <figure>
-                <img src="media/left_dist_tr.jpg" alt="left_dist_tr" style="width:300px">
-                <figcaption> Left Porch's bwdist</figcaption>
-            </figure>
-            <figure>
-                <img src="media/right_dist_tr.jpg" alt="right_dist_tr" style="width:300px">
-                <figcaption>Right Porch's bwdist</figcaption>
-            </figure>
-        </div>
-        <div class="double">
-            <figure>
-                <img src="media/hw_left_dist_tr.jpg" alt="hw_left_dist_tr" style="width:300px">
-                <figcaption>Left Hallway's bwdist</figcaption>
-            </figure>
-            <figure>
-                <img src="media/hw_right_dist_tr.jpg" alt="hw_right_dist_tr" style="width:300px">
-                <figcaption>Right Hallway's bwdist</figcaption>
-            </figure>
-        </div>
-        <div class="double">
-            <figure>
-                <img src="media/sh_top_dist_tr.jpg" alt="sh_top_dist_tr" style="height:300px">
-                <figcaption>Top Shelf's bwdist</figcaption>
-            </figure>
-            <figure>
-                <img src="media/sh_bot_dist_tr.jpg" alt="sh_bot_dist_tr" style="height:300px">
-                <figcaption>Bottom Shelf's bwdist</figcaption>
-            </figure>
-        </div> -->
 
         <p class="text">
             Moreover, the 2-band blending technique (with a 2-level image pyramid) can remedy wedge-like
@@ -437,6 +386,329 @@
                 <figcaption>High Frequency Blend</figcaption>
             </figure>
         </div>
+    </div>
+
+    <div class="Header">
+        <h1 class="projectName">Part B: Feature Matching for Autostitching</h1>
+    </div>
+
+    <div class="explanation">
+        <h2>Harris Interest Point Detector</h2>
+        <p class="text">
+            The first step of autostitching is finding corners in the images. Harris corners are computed and then
+            thresholded. The images below are overlaid with their respective Harris corners.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_lp_corners.png" alt="ptb_lp_corners" style="width:400px">
+                            <figcaption>Porch (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_rp_corners.png" alt="ptb_rp_corners" style="width:400px">
+                            <figcaption>Porch (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_lhw_corners.png" alt="ptb_lhw_corners" style="width:400px">
+                            <figcaption>Hallway (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_rhw_corners.png" alt="ptb_rhw_corners" style="width:400px">
+                            <figcaption>Hallway (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_tsh_corners.png" alt="ptb_tsh_corners" style="height:400px">
+                            <figcaption>Shelf (Top)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_bsh_corners.png" alt="ptb_bsh_corners" style="height:400px">
+                            <figcaption>Shelf (Bottom)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Adaptive Non-Maximal Suppression</h2>
+        <p class="text">
+            Adaptive non-maximal suppression is used to select 200 interest points from the Harris corners. This method
+            sorts the corners by non-maximal suppression radius and retrieves 200 corresponding to the largest radii,
+            ensuring that the interest points are well-distributed across the images.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_lp_anms.png" alt="ptb_lp_anms" style="width:400px">
+                            <figcaption>Porch (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_rp_anms.png" alt="ptb_rp_anms" style="width:400px">
+                            <figcaption>Porch (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_lhw_anms.png" alt="ptb_lhw_anms" style="width:400px">
+                            <figcaption>Hallway (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_rhw_anms.png" alt="ptb_rhw_anms" style="width:400px">
+                            <figcaption>Hallway (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_tsh_anms.png" alt="ptb_tsh_anms" style="height:400px">
+                            <figcaption>Shelf (Top)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_bsh_anms.png" alt="ptb_bsh_anms" style="height:400px">
+                            <figcaption>Shelf (Bottom)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Feature Descriptor Extraction</h2>
+        <p class="text">
+            For each feature point, a feature descriptor is extracted. More specifically, a 40x40 patch is created
+            around each feature point, and an 8x8 patch is sampled with a spacing of s=5 pixels. Finally, the feature
+            descriptors are bias/gain-normalized. For each image below, the 200 feature descriptors are shown in a 10x20
+            grid.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_lp_feat_desc.jpg" alt="ptb_lp_feat_desc" style="width:400px">
+                            <figcaption>Porch (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_rp_feat_desc.jpg" alt="ptb_rp_feat_desc" style="width:400px">
+                            <figcaption>Porch (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_lhw_feat_desc.jpg" alt="ptb_lhw_feat_desc" style="width:400px">
+                            <figcaption>Hallway (Left)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_rhw_feat_desc.jpg" alt="ptb_rhw_feat_desc" style="width:400px">
+                            <figcaption>Hallway (Right)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_tsh_feat_desc.jpg" alt="ptb_tsh_feat_desc" style="width:400px">
+                            <figcaption>Shelf (Top)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_bsh_feat_desc.jpg" alt="ptb_bsh_feat_desc" style="width:400px">
+                            <figcaption>Shelf (Bottom)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Feature Matching</h2>
+        <p class="text">
+            Feature descriptors are matched across images in a mosaic. Using <code>scipy.spatial</code>'s
+            <code>KDTree</code>, a match is recorded if:
+        </p>
+        <ul class="text">
+            <li>The nearest neighbor of one image is also the nearest neighbor of the other(s)</li>
+            <li>As proposed by Lowe, the ratio of the first to second nearest neighbor's square error is below a
+                threshold</li>
+        </ul>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_p_feat_match.png" alt="ptb_p_feat_match" style="width:800px">
+                            <figcaption>Porch (# Matches: 16)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_hw_feat_match.png" alt="ptb_hw_feat_match" style="width:800px">
+                            <figcaption>Hallway (# Matches: 28)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_sh_feat_match.png" alt="ptb_sh_feat_match" style="width:600px">
+                            <figcaption>Shelf (# Matches: 36)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>RANSAC</h2>
+        <p class="text">
+            Given feature matches, 4-point RANSAC is used to compute a robust homography estimate. The algorithm is
+            described in the following steps:
+        </p>
+        <ol class="text">
+            <li>Select four feature pairs at random</li>
+            <li>Compute exact homography H</li>
+            <li>Compute inliers where <code>dist(p', Hp)</code>
+                < error</li>
+            <li>Repeat steps 1-3 for <code>k</code> iterations</li>
+            <li>Keep largest set of inliers</li>
+            <li>Recompute least squares H estimate on all inliers</li>
+        </ol>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_p_inliers.png" alt="ptb_p_inliers" style="width:800px">
+                            <figcaption>Porch (Size of largest inlier set: 9)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_hw_inliers.png" alt="ptb_hw_inliers" style="width:800px">
+                            <figcaption>Hallway (Size of largest inlier set: 19)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_sh_inliers.png" alt="ptb_sh_inliers" style="width:600px">
+                            <figcaption>Shelf (Size of largest inlier set: 19)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Results</h2>
+        <p class="text">
+            Finally, Part A (image warping and blending) is repeated to produce mosaics. The manually and automatically
+            stitched results from both parts are displayed side by side for comparison. For the most part, the
+            automatically stitched results look just as if not better aligned than the manually stitched results.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/final_blend.jpg" alt="final_blend" style="width:400px">
+                            <figcaption>Porch (Manual)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_p_mosaic.jpg" alt="ptb_p_mosaic" style="width:400px">
+                            <figcaption>Porch (Automatic)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/hw_final_dist_tr_blend.jpg" alt="hw_final_dist_tr_blend"
+                                style="width:400px">
+                            <figcaption>Hallway (Manual)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_hw_mosaic.jpg" alt="ptb_hw_mosaic" style="width:400px">
+                            <figcaption>Hallway (Automatic)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/sh_final_dist_tr_blend.jpg" alt="sh_final_dist_tr_blend"
+                                style="height:400px">
+                            <figcaption>Shelf (Manual)</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/ptb_sh_mosaic.jpg" alt="ptb_sh_mosaic" style="height:400px">
+                            <figcaption>Shelf (Automatic)</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="text">
+            The coolest thing that I learned from this project was RANSAC. By testing a handful of random
+            samples, a comparable homography can be computed automatically and in a time-efficient manner.
+        </p>
     </div>
 
 </body>
