@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Portfolio</title>
+    <style>
+        body {
+            background-color: gainsboro;
+            font-family: Optima, sans-serif;
+            color: #383838;
+            margin: 40px;
+        }
+
+        .name {
+            color: dimgray;
+        }
+
+        .text {
+            margin-left: 70px;
+            margin-right: 70px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        /* .column {
+            padding: 5px;
+        } */
+
+        .caption {
+            text-align: center;
+        }
+
+        .imageSections {
+            text-align: center;
+        }
+
+        .row {
+            text-align: center;
+        }
+
+        .double {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        img {
+            padding: 10px;
+            border-radius: 10%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        figcaption {
+            padding: 2px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Header">
+        <h1 class="projectName">Fun With Diffusion Models!</h1>
+        <h2 class="name"><i>Catherine Chu</i></h2>
+    </div>
+
+    <div class="Header">
+        <h1 class="projectName">Part A: The Power of Diffusion Models</h1>
+    </div>
+
+    <div class="explanation">
+        <h2>Setup</h2>
+        <p class="text">
+            The diffusion model used in part A is DeepFloyd IF, a two stage model trained by Stability AI. To start, the
+            following outputs are generated for the displayed captions. The outputs reflect the text prompts pretty
+            accurately. Moreover, as <code>num_inference_steps</code> increases, the outputs become less noisy and more
+            detailed.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown.png" alt="snowy_mountain_village" style="width:250px">
+                            <figcaption>An Oil Painting of a Snowy Mountain Village</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-2.png" alt="man_wearing_hat" style="width:250px">
+                            <figcaption>A Man Wearing a Hat</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-3.png" alt="rocket_ship" style="width:250px">
+                            <figcaption>A Rocket Ship</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-4.png" alt="snowy_mountain_village_5" style="width:250px">
+                            <figcaption><code>num_inference_steps</code>=5</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown.png" alt="snowy_mountain_village" style="width:250px">
+                            <figcaption><code>num_inference_steps</code>=20</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-5.png" alt="snowy_mountain_village_30" style="width:250px">
+                            <figcaption><code>num_inference_steps</code>=30</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.1 Implementing the Forward Process</h2>
+        <p class="text">
+            The forward process involves taking a clean image and adding noise. The <code>alpha_cumprod</code> list is
+            used to compute a noisy image x_t at timestep t, where larger t corresponds to more noise. The
+            <code>forward(im, t)</code> function is implemented, and the following images of the Campanile (64
+            x 64) are outputted at different noise levels.
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/Unknown-6.png" alt="campanile" style="width:150px">
+                <figcaption>Berkeley Campanile<br>(Original Image)</figcaption>
+            </figure>
+        </div>
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-7.png" alt="campanile_250" style="width:150px">
+                            <figcaption>Noisy Campanile at t=250</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-8.png" alt="campanile_500" style="width:150px">
+                            <figcaption>Noisy Campanile at t=500</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-9.png" alt="campanile_750" style="width:150px">
+                            <figcaption>Noisy Campanile at t=750</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.2 Classical Denoising</h2>
+        <p class="text">
+            To try denoising the images using classical methods, Gaussian blur filtering produces the results below
+            (noisy images and Gaussian-denoised versions shown side by side). It is difficult, if not impossible, to
+            adequately remove noise.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-10.png" alt="campanile_250" style="width:150px">
+                            <figcaption>Noisy Campanile at t=250</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-12.png" alt="campanile_500" style="width:150px">
+                            <figcaption>Noisy Campanile at t=500</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-14.png" alt="campanile_750" style="width:150px">
+                            <figcaption>Noisy Campanile at t=750</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-11.png" alt="campanile_250" style="width:150px">
+                            <figcaption>Gaussian Blur Denoising at t=250</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-13.png" alt="campanile_500" style="width:150px">
+                            <figcaption>Gaussian Blur Denoising at t=500</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-15.png" alt="campanile_750" style="width:150px">
+                            <figcaption>Gaussian Blur Denoising at t=750</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.3 One-Step Denoising</h2>
+        <p class="text">
+            Next, the pretrained denoiser <code>stage_1.unet</code> is used to recover Gaussian noise from the images.
+            Then, this noise can be removed to recover something close to the original image.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-10.png" alt="campanile_250" style="width:150px">
+                            <figcaption>Noisy Campanile at t=250</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-12.png" alt="campanile_500" style="width:150px">
+                            <figcaption>Noisy Campanile at t=500</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-14.png" alt="campanile_750" style="width:150px">
+                            <figcaption>Noisy Campanile at t=750</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-16.png" alt="campanile_250" style="width:150px">
+                            <figcaption>One-Step Denoised Campanile at t=250</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-17.png" alt="campanile_500" style="width:150px">
+                            <figcaption>One-Step Denoised Campanile at t=500</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-18.png" alt="campanile_750" style="width:150px">
+                            <figcaption>One-Step Denoised Campanile at t=750</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.4 Iterative Denoising</h2>
+        <p class="text">
+            To denoise iteratively, a new list of timesteps <code>strided_timesteps</code> is created, iterating from
+            the noisiest image (largest t) to a clean image with a regular stride step (e.g. 30). Then, the denoising
+            step is implemented at every timestep in the <code>iterative_denoise</code> function.
+            <br><br>
+            The following example starts at timestep <code>i_start=10</code> and shows the noisy image at every fifth
+            loop of denoising. Finally, the predicted clean image is displayed and compared against the previous
+            denoising
+            methods.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-23.png" alt="campanile_90" style="width:150px">
+                            <figcaption>Noisy Campanile at t=90</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-22.png" alt="campanile_240" style="width:150px">
+                            <figcaption>Noisy Campanile at t=240</figcaption>
+                        </figure>
+                    </td>
+
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-21.png" alt="campanile_390" style="width:150px">
+                            <figcaption>Noisy Campanile at t=390</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-20.png" alt="campanile_540" style="width:150px">
+                            <figcaption>Noisy Campanile at t=540</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-19.png" alt="campanile_690" style="width:150px">
+                            <figcaption>Noisy Campanile at t=690</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="imageSections">
+            <table>
+                <tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-6.png" alt="original" style="width:150px">
+                            <figcaption>Original</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-24.png" alt="iterative_denoised" style="width:150px">
+                            <figcaption>Iteratively Denoised Campanile</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-25.png" alt="one_step_denoised" style="width:150px">
+                            <figcaption>One-Step Denoised Campanile</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-26.png" alt="one_step_denoised" style="width:150px">
+                            <figcaption>Gaussian Blurred Campanile</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.5 Diffusion Model Sampling</h2>
+        <p class="text">
+            The<code>iterative_denoise</code> function can also be used to generate images from scratch, setting
+            <code>i_start=0</code> and passing in random noise. 5 sampled images:
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-27.png" alt="sample1" style="width:150px">
+                            <figcaption>Sample 1</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-28.png" alt="sample2" style="width:150px">
+                            <figcaption>Sample 2</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-29.png" alt="sample3" style="width:150px">
+                            <figcaption>Sample 3</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-30.png" alt="sample4" style="width:150px">
+                            <figcaption>Sample 4</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-31.png" alt="sample5" style="width:150px">
+                            <figcaption>Sample 5</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.6 Classifier-Free Guidance (CFG)</h2>
+        <p class="text">
+            To improve image quality, CFG computes a conditional and uncondiitonal noise estimate in
+            <code>iterative_denoise_cfg</code>. WHen the strength of the CFG is > 1, much higher quality images are
+            generated. 5 sampled images:
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-32.png" alt="sample1" style="width:150px">
+                            <figcaption>Sample 1 with CFG</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-33.png" alt="sample2" style="width:150px">
+                            <figcaption>Sample 2 with CFG</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-34.png" alt="sample3" style="width:150px">
+                            <figcaption>Sample 3 with CFG</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-35.png" alt="sample4" style="width:150px">
+                            <figcaption>Sample 4 with CFG</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-36.png" alt="sample5" style="width:150px">
+                            <figcaption>Sample 5 with CFG</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.7 Image-to-Image Translation</h2>
+        <p class="text">
+            Following the SDEdit algorithm, original images can also be noised and forced back onto the image
+            manifold without conditioning. The outputs of different starting indices are shown below, gradually matching
+            the original images closer as <code>i_start</code> increases.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-37.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=1</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-38.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=3</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-39.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=5</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-40.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=7</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-41.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=10</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-42.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=20</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-6.png" alt="campanile" style="width:90px; border-radius:20%">
+                            <figcaption>Original Campanile</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-43.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=1</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-44.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=3</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-45.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=5</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-46.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=7</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-47.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=10</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-48.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=20</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-49.png" alt="waterfall" style="width:90px; border-radius:20%">
+                            <figcaption>Original Waterfall</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-51.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=1</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-52.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=3</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-53.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=5</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-54.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=7</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-55.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=10</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-56.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>SDEdit with <code>i_start=20</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-50.png" alt="canyon" style="width:90px; border-radius:20%">
+                            <figcaption>Original Canyon</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.7.1 Editing Hand-Drawn and Web Images</h2>
+        <p class="text">
+            This procedure works particularly well when starting with nonrealistic images. It is applied to one image
+            from the web and two hand-drawn images.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-58.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>Espresso at <code>i_start=1</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-59.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>Espresso at <code>i_start=3</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-60.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>Espresso at <code>i_start=5</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-61.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>Espresso at <code>i_start=7</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-62.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>Espresso at <code>i_start=10</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-63.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>Espresso at <code>i_start=20</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-57.png" alt="espresso" style="width:90px; border-radius:20%">
+                            <figcaption>Original Espresso</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-65.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>Cherries at <code>i_start=1</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-66.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>Cherries at <code>i_start=3</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-67.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>Cherries at <code>i_start=5</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-68.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>Cherries at <code>i_start=7</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-69.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>Cherries at <code>i_start=10</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-70.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>Cherries at <code>i_start=20</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-64.png" alt="cherries" style="width:90px; border-radius:20%">
+                            <figcaption>Original Cherries</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-72.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>Pikachu at <code>i_start=1</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-73.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>Pikachu at <code>i_start=3</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-74.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>Pikachu at <code>i_start=5</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-75.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>Pikachu at <code>i_start=7</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-76.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>Pikachu at <code>i_start=10</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-77.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>Pikachu at <code>i_start=20</code></figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-71.png" alt="pikachu" style="width:90px; border-radius:20%">
+                            <figcaption>Original Pikachu</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.7.2 Inpainting</h2>
+        <p class="text">
+            Following the RePaint paper, inpainting involves a binary mask m, where the new image has the same content
+            as the original image where m is 0, and new content where m is 1. At every denoising step, x_t can be forced
+            to have the same pixels as the original image (plus the amount of noise at timestep t) where m is 0.
+            <br><br>
+            Note: Mostly likely due to the diffusion model not being trained for the inpainting task, and the training
+            data potentially containing more humans than animals, the Dogs Inpainted output replaces the original dog
+            with a human.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-78.png" alt="og" style="width:150px">
+                            <figcaption>Campanile</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-79.png" alt="mask" style="width:150px">
+                            <figcaption>Mask</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-80.png" alt="hole" style="width:150px">
+                            <figcaption>Hole to Fill</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-81.png" alt="inpainted" style="width:150px">
+                            <figcaption>Campanile Inpainted</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-82.png" alt="og" style="width:150px">
+                            <figcaption>Dogs</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-83.png" alt="mask" style="width:150px">
+                            <figcaption>Mask</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-84.png" alt="hole" style="width:150px">
+                            <figcaption>Hole to Fill</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-85.png" alt="inpainted" style="width:150px">
+                            <figcaption>Dogs Inpainted</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-86.png" alt="og" style="width:150px">
+                            <figcaption>Wedding</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-87.png" alt="mask" style="width:150px">
+                            <figcaption>Mask</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-88.png" alt="hole" style="width:150px">
+                            <figcaption>Hole to Fill</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-89.png" alt="inpainted" style="width:150px">
+                            <figcaption>Wedding Inpainted</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.7.3 Text-Conditional Image-to-Image Translation</h2>
+        <p class="text">
+            SDEdit can also be guided with a text prompt. The examples below use the prompt: "a rocket ship." As before,
+            the outputs gradually look more like the originals as the starting amount of noise decreases from level 1 to
+            20.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-90.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 1</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-91.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 3</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-92.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 5</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-93.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 7</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-94.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 10</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-95.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 20</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-6.png" alt="og" style="width:90px; border-radius:20%">
+                            <figcaption>Campanile</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-97.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 1</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-98.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 3</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-99.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 5</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-100.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 7</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-101.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 10</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-102.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 20</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-96.png" alt="og" style="width:90px; border-radius:20%">
+                            <figcaption>Soda</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-104.png" alt="sdedit1" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 1</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-105.png" alt="sdedit3" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 3</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-106.png" alt="sdedit5" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 5</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-107.png" alt="sdedit7" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 7</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-108.png" alt="sdedit10" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 10</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-109.png" alt="sdedit20" style="width:90px; border-radius:20%">
+                            <figcaption>Rocket Ship at noise level 20</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-103.png" alt="og" style="width:90px; border-radius:20%">
+                            <figcaption>Giraffe</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.8 Visual Anagrams</h2>
+        <p class="text">
+            Visual anagrams appear as one image right side up, but another when flipped upside down. They are
+            implemented by denoising an image to obtain its noise estimate, repeating this process for the image
+            flipped upside down, and averaging the two noise estimates. The denoising step is then performed with
+            this averaged noise estimate.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-110.png" alt="vis_ag" style="width:200px">
+                            <figcaption>An Oil Painting of an Old Man</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-111.png" alt="vis_ag_flip" style="width:200px">
+                            <figcaption>An Oil Painting of People around a Campfire</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-112.png" alt="vis_ag" style="width:200px">
+                            <figcaption>A Photo of a Dog</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-113.png" alt="vis_ag_flip" style="width:200px">
+                            <figcaption>A Photo of a Hipster Barista</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-114.png" alt="vis_ag" style="width:200px">
+                            <figcaption>A Rocket Ship</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-115.png" alt="vis_ag_flip" style="width:200px">
+                            <figcaption>A Man Wearing a Hat</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.9 Hybrid Images</h2>
+        <p class="text">
+            Hybrid images look like one image up close and another from a distance. To create hybrid images, a
+            composite noise estimate is created by combining low frequencies from one noise estimate (for the
+            image to be perceived from far away) with high frequencies of the other (for the image to be
+            perceived from up close).
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-116.png" alt="hybrid" style="width:200px">
+                            <figcaption>Hybrid Image of a Skull and a Waterfall</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-117.png" alt="hybrid" style="width:200px">
+                            <figcaption>Hybrid Image of a Skull and a Snowy Mountain Village</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="media/Unknown-118.png" alt="hybrid" style="width:200px">
+                            <figcaption>Hybrid Image of an Old Man and a Snowy Mountain Village</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="Header">
+        <h1 class="projectName">Part B: Diffusion Models from Scratch</h1>
+    </div>
+
+</body>
+
+</html>
