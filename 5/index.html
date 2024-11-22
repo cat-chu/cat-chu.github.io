@@ -994,7 +994,7 @@
         <p class="text">
             Visual anagrams appear as one image right side up, but another when flipped upside down. They are
             implemented by denoising an image to obtain its noise estimate, repeating this process for the image
-            flipped upside down, and averaging the two noise estimates. The denoising step is then performed with
+            flipped upside down and averaging the two noise estimates. The denoising step is then performed with
             this averaged noise estimate.
         </p>
 
@@ -1083,6 +1083,160 @@
 
     <div class="Header">
         <h1 class="projectName">Part B: Diffusion Models from Scratch</h1>
+    </div>
+
+    <div class="explanation">
+        <h2>1.1 Implementing the UNet</h2>
+        <p class="text">
+            To begin, the following one-step denoiser is implemented as a UNet:
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/b_unconditional_arch.png" alt="b_unconditional_arch" style="width:1000px">
+                <figcaption>Unconditional UNet</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.2 Using the UNet to Train a Denoiser</h2>
+        <p class="text">
+            The UNet will be trained on MNIST digits. Data pairs (z,x) are generated, where z is controlled by a varying
+            noise level sigma.
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/b_diff_noises.png" alt="b_diff_noises" style="width:600px">
+                <figcaption>Varying levels of noise on MNIST digits</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.2.1 Training</h2>
+        <p class="text">
+            The denoiser is trained to denoise noisy image z with sigma=0.5 to a clean image x. Model parameters include
+            a
+            batch size of 256 and hidden dimension D=128, using the Adam optimizer with a learning rate of 1e-4. The
+            model is trained over 5 epochs.
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/b_train_loss.png" alt="b_train_loss" style="width:500px">
+                <figcaption>Training Loss Curve</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            Below are sample results after the first and fifth epochs.
+        </p>
+        <div class="double">
+            <figure>
+                <img src="media/b_1epoch.png" alt="b_1epoch" style="width:400px">
+                <figcaption>Results on digits from the test set after 1 epoch of training</figcaption>
+            </figure>
+            <figure>
+                <img src="media/b_5epochs.png" alt="b_5epochs" style="width:400px">
+                <figcaption>Results on digits from the test set after 5 epochs of training</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>1.2.2 Out-of-Distribution Testing</h2>
+        <p class="text">
+            The denoiser results are also visualized on test set digits with varying levels of noise beyond sigma=0.5.
+            The
+            model performs well on smaller noise levels, but has trouble with bigger noise levels.
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/b_ood.png" alt="b_ood" style="width:1000px; border-radius:5%">
+                <figcaption>Results on digits from the test set with varying noise levels</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>2.1 Adding Time Conditioning to UNet</h2>
+        <p class="text">
+            Now, a diffusion model is trained to implement the <a href="https://arxiv.org/abs/2006.11239">DDPM
+                paper</a>.
+            Specifically for the UNet, the major architectural change is injecting a scalar time t to condition on it
+            via
+            an FCBlock (fully-connected block).
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/b_conditional_arch.png" alt="b_conditional_arch" style="width:1000px">
+                <figcaption>Conditioned UNet</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>2.2 Training the UNet</h2>
+        <p class="text">
+            The time-conditioned UNet is trained to predict the noise in a noisy image x_t generated at timestep t. The
+            batch size is 128, hidden dimension D=64 and the Adam optimizer is used with learning rate 1e-3 and an
+            exponential learning rate decay scheduler. The model is trained for 20 epochs.
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/b_time_loss.png" alt="b_time_loss" style="width:500px">
+                <figcaption>Time-Conditioned UNet Training Loss Curve</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>2.3 Sampling from the UNet</h2>
+        <p class="text">
+            Below are 40 sample results generated from scratch in T=300 timesteps after the fifth and 20th epochs.
+        </p>
+        <div class="double">
+            <figure>
+                <img src="media/b_time5.png" alt="b_time5" style="width:500px">
+                <figcaption>After 5 Epochs</figcaption>
+            </figure>
+            <figure>
+                <img src="media/b_time20.png" alt="b_time20" style="width:500px">
+                <figcaption>After 20 Epochs</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>2.4 Adding Class Conditioning to UNet</h2>
+        <p class="text">
+            Next, the UNet is also conditioned on the class of the digit, 0-9, by added two more FCBlocks. The class c
+            is one-hot-encoded and set to 0 with probability p_uncond=0.1 so that the UNet still works without
+            class-conditioning.
+        </p>
+        <div class="row">
+            <figure>
+                <img src="media/b_class_loss.png" alt="b_class_loss" style="width:500px">
+                <figcaption>CLass-Conditioned UNet Training Loss Curve</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>2.5 Sampling from the Class-Conditioned UNet</h2>
+        <p class="text">
+            Similarly, below are 40 sample results generated after the fifth and 20th epochs. Classifier-free guidance
+            with gamma=5.0 is used to improve conditional results.
+        </p>
+        <div class="double">
+            <figure>
+                <img src="media/b_class5.png" alt="b_class5" style="width:500px">
+                <figcaption>After 5 Epochs</figcaption>
+            </figure>
+            <figure>
+                <img src="media/b_class20.png" alt="b_class20" style="width:500px">
+                <figcaption>After 20 Epochs</figcaption>
+            </figure>
+        </div>
     </div>
 
 </body>
