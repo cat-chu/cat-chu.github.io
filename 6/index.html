@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Portfolio</title>
+    <style>
+        body {
+            background-color: gainsboro;
+            font-family: Optima, sans-serif;
+            color: #383838;
+            margin: 40px;
+        }
+
+        .name {
+            color: dimgray;
+        }
+
+        .text {
+            margin-left: 70px;
+            margin-right: 70px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+        }
+
+        /* .column {
+            padding: 5px;
+        } */
+
+        .caption {
+            text-align: center;
+        }
+
+        .imageSections {
+            text-align: center;
+        }
+
+        .row {
+            text-align: center;
+        }
+
+        .double {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+        }
+
+        img {
+            padding: 10px;
+            border-radius: 10%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        figcaption {
+            padding: 2px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Header">
+        <h1 class="projectName">Neural Radiance Field!</h1>
+        <h2 class="name"><i>Catherine Chu</i></h2>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 1: Fit a Neural Field to a 2D Image</h2>
+        <p class="text">
+            Before working in 3D, we start with a 2D example: a Neural Field from 2D pixel coordinates (u,v) to 3D pixel
+            colors (r,g,b). This involves a couple of steps:
+        </p>
+        <ol class="text">
+            <li>Network: creating a multilayer perceptron (MLP) with sinusoidal positional encodings
+                <ol type="i">
+                    <li>MLP architecture: 3 hidden linear layers of size 256 with ReLU, 1 linear output layer of size 3
+                        with sigmoid</li>
+                    <li>PE: series of sinusoidal functions with highest frequency L=10, mapping 2D coordinates to 42D
+                        vectors</li>
+                </ol>
+            </li>
+            <li>Dataloader: implementing a dataloader that randomly samples and processes N pixels per training
+                iteration</li>
+            <li>Loss Function, Optimizer and Metric: defining metrics and hyperparameters
+                <ol type="i">
+                    <li>25 epochs, batch size 1000, Adam optimizer with learning rate 1e-2</li>
+                    <li>Loss function: Peak signal-to-noise ratio (PSNR) computed from MSE</li>
+                </ol>
+            </li>
+            <li>Hyperparameter Tuning</li>
+        </ol>
+
+        <p class="text">
+            The following sequence visualizes the training process by plotting the predicted images across iterations.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/fox1.png" alt="fox1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/fox2.png" alt="fox2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/fox3.png" alt="fox3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/fox4.png" alt="fox3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/fox5.png" alt="fox3" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="row">
+            <figure>
+                <img src="media/fox_psnr.png" alt="fox_psnr" style="width:300px">
+                <figcaption>Fox: PSNR Curve 1</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            An example from the hyperparameter tuning process was varying L from 10 to 15 and varying channel size from
+            256 to 128. This edit didn't affect the performance of the network much, as the increase in L seemed to
+            compensate for the decrease in channel size.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/foxb1.png" alt="foxb1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/foxb2.png" alt="foxb2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/foxb3.png" alt="foxb3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/foxb4.png" alt="foxb3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/foxb5.png" alt="foxb3" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="row">
+            <figure>
+                <img src="media/foxb_psnr.png" alt="fox_psnr" style="width:300px">
+                <figcaption>Fox: PSNR Curve 2</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            This optimization was also performed for another image. Specifically, the learning rate was increased to
+            2e-2 because it didn't seem to have converged.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/cat1.png" alt="cat1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/cat2.png" alt="cat2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/cat3.png" alt="cat3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/cat4.png" alt="cat4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/cat5.png" alt="cat5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="row">
+            <figure>
+                <img src="media/cat_psnr.png" alt="cat_psnr" style="width:300px">
+                <figcaption>Cat: PSNR Curve 1</figcaption>
+            </figure>
+        </div>
+
+        <p class="text">
+            This time, I tried the opposite for hyperparameter tuning: decreasing L from 10 to 5 and increasing channel
+            size from 256 to 400. As seen in the predicted outputs, this change seems to create smoother images that
+            capture fewer positional differences.
+        </p>
+
+        <div class="imageSections">
+            <table>
+                <tr>
+                    <td>
+                        <img src="media/catb1.png" alt="catb1" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/catb2.png" alt="catb2" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/catb3.png" alt="catb3" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/catb4.png" alt="catb4" style="width:100%">
+                    </td>
+                    <td>
+                        <img src="media/catb5.png" alt="catb5" style="width:100%">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="row">
+            <figure>
+                <img src="media/catb_psnr.png" alt="catb_psnr" style="width:300px">
+                <figcaption>Cat: PSNR Curve 2</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="explanation">
+        <h2>Part 2: Fit a Neural Radiance Field from Multi-view Images</h2>
+        <h3>Part 2.1: Create Rays From Cameras</h2>
+            <p>To begin, we define a few functions to transform among image, camera and world coordinates:</p>
+            <ul class="text">
+                <li><b>Camera to World Coordinate Conversion:</b> the <code>transform(c2w, x_c)</code> function
+                    multiplies camera coordinates by a camera-to-world transformation, or extrinsic, matrix, which
+                    contains a rotation matrix and translation vector, in order to obtain the corresponding world
+                    coordinates.
+                </li>
+                <li><b>Pixel to Camera Coordinate Conversion:</b> the <code>pixel_to_camera(c2w, x_c)</code> function
+                    transforms pixel coordinates into the camera coordinate system, using the pinhole camera's
+                    intrinsic matrix K defined by its focal length and principal point. </li>
+                <li><b>Pixel to Ray:</b> the <code>ray_o, ray_d = pixel_to_ray(K, c2w, uv)</code> function utilizes the
+                    previous functions to convert pixel coordinates to world coordinates, then create rays with an
+                    origin and normalized direction.</li>
+            </ul>
+    </div>
+
+    <div class="explanation">
+        <h3>Part 2.2: Sampling</h2>
+            <ul class="text">
+                <li><b>Sampling Rays from Images:</b> the <code>sample_rays(N, M)</code> function randomly samples M
+                    images, then N rays from each image.</li>
+                <li><b>Sampling Points along Rays:</b> the <code>sample_along_rays(rays_o, rays_d, perturb)</code> then
+                    samples points along these rays, which can be perturbed to help prevent ovefitting in the training
+                    process.</li>
+            </ul>
+    </div>
+
+    <div class="explanation">
+        <h3>Part 2.3: Putting the Dataloading All Together</h2>
+            <p class="text">The above steps are then integrated into the dataloading process, which randomly samples
+                pixels from a dataset of images, and is visualized below:</p>
+
+            <div class="row">
+                <figure>
+                    <img src="media/3d.png" alt="3d" style="width:400px">
+                    <figcaption>Plot Cameras, 100 Rays and Samples in 3D</figcaption>
+                </figure>
+            </div>
+    </div>
+
+
+    <div class="explanation">
+        <h3>Part 2.4: Neural Radiance Field</h2>
+            <p class="text">Now, the Neural Radiance Field can be learned with a network that takes in 3D world
+                coordinates x and 3D ray direction vector r_d, then outputs predicted 3D rgb colors and a 1D density.
+                This network is a deeper, more powerful MLP.
+            </p>
+
+            <div class="row">
+                <figure>
+                    <img src="media/nerf_arch.png" alt="nerf_arch" style="height:250px">
+                    <figcaption>NeRF3D Model Architecture</figcaption>
+                </figure>
+            </div>
+    </div>
+
+
+    <div class="explanation">
+        <h3>Part 2.5: Volume Rendering</h2>
+            <p class="text">To generate rendered colors, the volume rendering equation aggregates the batch of samples
+                along each ray.</p>
+
+            <div class="row">
+                <figure>
+                    <img src="media/volrend.png" alt="volrend" style="height:80px">
+                    <figcaption>Volume Rendering Equation</figcaption>
+                </figure>
+            </div>
+
+            <p class="text">The training process is visualized below, along with the PSNR curve every step (10
+                iterations) on the validation set.
+            </p>
+            <div class="imageSections">
+                <table>
+                    <tr>
+                        <td>
+                            <img src="media/lego1.png" alt="lego1" style="width:100%">
+                        </td>
+                        <td>
+                            <img src="media/lego2.png" alt="lego2" style="width:100%">
+                        </td>
+                        <td>
+                            <img src="media/lego3.png" alt="lego3" style="width:100%">
+                        </td>
+                        <td>
+                            <img src="media/lego4.png" alt="lego4" style="width:100%">
+                        </td>
+                        <td>
+                            <img src="media/lego5.png" alt="lego5" style="width:100%">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="row">
+                <figure>
+                    <img src="media/lego_psnr.png" alt="lego_psnr" style="width:300px">
+                    <figcaption>Lego Scene: Validation PSNR Curve</figcaption>
+                </figure>
+            </div>
+
+            <p>Finally, the network can be used to render a novel view of the scene from an arbitrary camera extrinsic:
+            </p>
+
+            <div class="row">
+                <figure>
+                    <img src="media/test_vid.gif" alt="test_vid" style="width:300px">
+                    <figcaption>Spherical Rendering of Lego Scene</figcaption>
+                </figure>
+            </div>
+    </div>
+    <!-- 
+    <div class="explanation">
+        <h3>Bells & Whistles: Background Color</h2>
+            <p class="text">A background color can be injected as the bottom of the rays into the volume rendering
+                equation.</p>
+
+            <div class="row">
+                <figure>
+                    <img src="media/testc_vid.gif" alt="testc_vid" style="width:300px">
+                    <figcaption>Lego Scene with Background Color</figcaption>
+                </figure>
+            </div>
+    </div> -->
+</body>
+
+</html>
